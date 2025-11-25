@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Nutrition Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 3em;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2em;
+        }
+
+        .upload-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.8s ease;
+            margin-bottom: 30px;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            background: linear-gradient(45deg, #f5f7fa 0%, #c3cfe2 100%);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            transform: scale(1.02);
+            box-shadow: 0 5px 20px rgba(102,126,234,0.2);
+        }
+
+        .upload-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-label {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .file-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102,126,234,0.4);
+        }
+
+        .file-name {
+            margin-top: 15px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .analyze-btn {
+            padding: 15px 50px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(245,87,108,0.3);
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(245,87,108,0.4);
+        }
+
+        .analyze-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .image-card, .nutrition-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-icon {
+            font-size: 1.2em;
+        }
+
+        .uploaded-image {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .nutrition-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .nutrition-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .nutrition-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            letter-spacing: 1px;
+        }
+
+        .nutrition-table tbody tr {
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .nutrition-table tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .nutrition-table tbody tr:hover {
+            background: #e8f4f8;
+            transform: scale(1.02);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nutrition-table td {
+            padding: 12px 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .food-name {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .nutrient-value {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0,0,0,0.1);
+            border-left-color: #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        .raw-nutrition {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #555;
+            max-height: 400px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .badge-calories {
+            background: #ffeb3b;
+            color: #333;
+        }
+
+        .badge-protein {
+            background: #4caf50;
+            color: white;
+        }
+
+        .badge-carbs {
+            background: #2196f3;
+            color: white;
+        }
+
+        .badge-fat {
+            background: #ff9800;
+            color: white;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .results-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .nutrition-table {
+                font-size: 0.9em;
+            }
+            
+            .nutrition-table th, .nutrition-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🥗 Food Nutrition Analyzer</h1>
+            <p>Upload your food image and get instant nutritional insights powered by AI</p>
+        </div>
+
+        <div class="upload-card">
+            <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">📸</div>
+                    <label for="fileInput" class="file-label">Choose Food Image</label>
+                    <input type="file" name="file" id="fileInput" accept="image/*" required onchange="displayFileName(this)">
+                    <div class="file-name" id="fileName">No file selected</div>
+                </div>
+                <center>
+                    <button type="submit" class="analyze-btn" id="analyzeBtn" disabled>
+                        🔬 Analyze Nutrition
+                    </button>
+                </center>
+                <div class="loading" id="loadingDiv">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 15px; color: #666;">Analyzing your food...</p>
+                </div>
+            </form>
+        </div>
+
+        {% if image_url and result %}
+        <div class="results-section">
+            <div class="image-card">
+                <h3 class="card-title">
+                    <span class="card-icon">🖼️</span>
+                    Uploaded Food Image
+                </h3>
+                <img src="{{ url_for('static', filename='uploads/' + image_url) }}" alt="Uploaded Food" class="uploaded-image">
+
+            </div>
+
+            <div class="nutrition-card">
+                <h3 class="card-title">
+                    <span class="card-icon">📊</span>
+                    Nutritional Analysis
+                </h3>
+                
+                <!-- This div will be populated by JavaScript to parse the table from result -->
+                <div id="nutritionTableContainer">
+                    <!-- The raw nutrition data will be parsed and displayed as a proper HTML table -->
+                    <div class="raw-nutrition">{{ result }}</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function displayFileName(input) {
+            const fileName = input.files[0]?.name || "No file selected";
+            document.getElementById('fileName').textContent = fileName;
+            document.getElementById('analyzeBtn').disabled = !input.files[0];
+        }
+
+        document.getElementById('uploadForm').addEventListener('submit', function() {
+            document.getElementById('loadingDiv').classList.add('active');
+            document.getElementById('analyzeBtn').disabled = true;
+        });
+
+        // Parse the nutrition result and create a proper HTML table
+        document.addEventListener('DOMContentLoaded', function() {
+            const nutritionContainer = document.getElementById('nutritionTableContainer');
+            if (nutritionContainer) {
+                const rawText = nutritionContainer.querySelector('.raw-nutrition')?.textContent;
+                if (rawText) {
+                    // Try to parse the text as a table
+                    const lines = rawText.trim().split('\n');
+                    let tableHTML = '<table class="nutrition-table"><thead><tr>';
+                    let inTable = false;
+                    let headerProcessed = false;
+                    
+                    // Simple parser for markdown-style tables
+                    for (let line of lines) {
+                        line = line.trim();
+                        if (line.includes('|')) {
+                            const cells = line.split('|').filter(cell => cell.trim());
+                            
+                            if (!headerProcessed && cells.length > 0) {
+                                // Process header
+                                cells.forEach(cell => {
+                                    tableHTML += `<th>${cell.trim()}</th>`;
+                                });
+                                tableHTML += '</tr></thead><tbody>';
+                                headerProcessed = true;
+                                inTable = true;
+                            } else if (line.includes('---')) {
+                                // Skip separator line
+                                continue;
+                            } else if (inTable && cells.length > 0) {
+                                // Process data rows
+                                tableHTML += '<tr>';
+                                cells.forEach((cell, index) => {
+                                    const trimmedCell = cell.trim();
+                                    if (index === 0) {
+                                        tableHTML += `<td class="food-name">${trimmedCell}</td>`;
+                                    } else {
+                                        tableHTML += `<td class="nutrient-value">${trimmedCell}</td>`;
+                                    }
+                                });
+                                tableHTML += '</tr>';
+                            }
+                        }
+                    }
+                    
+                    if (inTable) {
+                        tableHTML += '</tbody></table>';
+                        nutritionContainer.innerHTML = tableHTML;
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
